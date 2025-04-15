@@ -1,12 +1,11 @@
 "use client"
 
+import { motion } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import { Heart, MoreHorizontal } from "lucide-react"
 import { useState } from "react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Popover } from "@/components/popover"
 
 interface NFT {
   id: string
@@ -19,9 +18,10 @@ interface NFT {
 
 interface NFTCardProps {
   nft: NFT
+  index: number
 }
 
-export function NFTCard({ nft }: NFTCardProps) {
+export function NFTCard({ nft, index }: NFTCardProps) {
   const [liked, setLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 20))
 
@@ -34,8 +34,20 @@ export function NFTCard({ nft }: NFTCardProps) {
     setLiked(!liked)
   }
 
+  const springTransition = {
+    type: "spring",
+    stiffness: 400,
+    damping: 25,
+  }
+
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-md">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ ...springTransition, delay: index * 0.1 }}
+      whileHover={{ y: -5, transition: springTransition }}
+      className="ghibli-card p-0 overflow-hidden"
+    >
       <Link href={`/nft/${nft.id}`}>
         <div className="relative aspect-square overflow-hidden">
           <Image
@@ -46,41 +58,50 @@ export function NFTCard({ nft }: NFTCardProps) {
           />
         </div>
       </Link>
-      <CardContent className="p-4">
+      <div className="p-4">
         <div className="flex justify-between items-start">
           <div>
-            <Link href={`/nft/${nft.id}`} className="font-medium hover:underline">
+            <Link href={`/nft/${nft.id}`} className="font-medium hover:underline ghibli-heading">
               {nft.title}
             </Link>
-            <p className="text-sm text-muted-foreground">by {nft.creator}</p>
+            <p className="text-sm ghibli-subheading">by {nft.creator}</p>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">More options</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Share</DropdownMenuItem>
-              <DropdownMenuItem>Report</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="relative">
+            <Popover
+              trigger={
+                <button className="p-2 rounded-full hover:bg-[var(--muted)]" aria-label="More options">
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+              }
+            >
+              <div className="space-y-2">
+                <button className="w-full text-left px-2 py-1 hover:bg-[var(--muted)] rounded">Share</button>
+                <button className="w-full text-left px-2 py-1 hover:bg-[var(--muted)] rounded">Report</button>
+                <button className="w-full text-left px-2 py-1 hover:bg-[var(--muted)] rounded">View Details</button>
+              </div>
+            </Popover>
+          </div>
         </div>
-      </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between">
+      </div>
+      <div className="p-4 pt-0 flex justify-between border-t border-[var(--border)] mt-2">
         <div>
           <p className="text-sm font-medium">{nft.price} SOL</p>
-          <p className="text-xs text-muted-foreground">{nft.bids} bids</p>
+          <p className="text-xs ghibli-subheading">{nft.bids} bids</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLike}>
-            <Heart className={`h-4 w-4 ${liked ? "fill-red-500 text-red-500" : ""}`} />
-            <span className="sr-only">Like</span>
-          </Button>
+          <motion.button
+            className="p-2 rounded-full hover:bg-[var(--muted)]"
+            whileHover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.9 }}
+            transition={springTransition}
+            onClick={handleLike}
+            aria-label={liked ? "Unlike" : "Like"}
+          >
+            <Heart className={`h-4 w-4 ${liked ? "fill-[var(--destructive)] text-[var(--destructive)]" : ""}`} />
+          </motion.button>
           <span className="text-xs">{likeCount}</span>
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </motion.div>
   )
 }
