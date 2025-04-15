@@ -8,7 +8,7 @@ import { AuthProvider } from "@/components/auth-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Ghibli NFT Marketplace",
+  title: "Ghibli Verse - NFT Marketplace",
   description: "Discover, collect, and trade unique Ghibli-inspired NFTs",
     generator: 'v0.dev'
 }

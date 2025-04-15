@@ -7,18 +7,14 @@ import { motion } from "framer-motion"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { registerUser } from "@/app/actions/auth-actions"
-import { AnimatedHeader } from "@/components/animated-header"
-import { GhibliButton } from "@/components/ui/ghibli-button"
-import { GhibliCard } from "@/components/ui/ghibli-card"
+import { Header } from "@/components/header"
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
+  const [activeTab, setActiveTab] = useState("login")
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -77,113 +73,142 @@ export default function LoginPage() {
 
   return (
     <>
-      <AnimatedHeader />
-      <div className="container flex items-center justify-center min-h-[calc(100vh-4rem)] py-12">
+      <Header />
+      <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-4rem)] py-12 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          <GhibliCard className="border-2">
+          <div className="ghibli-card border-2 border-[var(--border)]">
             <div className="space-y-1 mb-6">
-              <h1 className="text-2xl font-bold text-center ghibli-heading">Welcome to GhibliNFT</h1>
+              <h1 className="text-2xl font-bold text-center ghibli-heading">Welcome to Ghibli Verse</h1>
               <p className="text-center ghibli-subheading">Sign in to your account or create a new one</p>
             </div>
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-              </TabsList>
-              <TabsContent value="login">
-                <form onSubmit={handleLogin}>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="your.email@example.com"
-                        required
-                        className="input-ghibli"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="password">Password</Label>
-                        <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                          Forgot password?
-                        </Link>
-                      </div>
-                      <Input
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••••"
-                        required
-                        className="input-ghibli"
-                      />
-                    </div>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
+
+            <div className="flex border-b border-[var(--border)] mb-6">
+              <button
+                className={`flex-1 py-2 text-center font-medium ${
+                  activeTab === "login"
+                    ? "border-b-2 border-[var(--primary)] text-[var(--primary)]"
+                    : "text-[var(--muted-foreground)]"
+                }`}
+                onClick={() => setActiveTab("login")}
+              >
+                Login
+              </button>
+              <button
+                className={`flex-1 py-2 text-center font-medium ${
+                  activeTab === "register"
+                    ? "border-b-2 border-[var(--primary)] text-[var(--primary)]"
+                    : "text-[var(--muted-foreground)]"
+                }`}
+                onClick={() => setActiveTab("register")}
+              >
+                Register
+              </button>
+            </div>
+
+            {activeTab === "login" ? (
+              <form onSubmit={handleLogin}>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="email" className="ghibli-label">
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="your.email@example.com"
+                      required
+                      className="ghibli-input"
+                    />
                   </div>
-                  <div className="mt-6">
-                    <GhibliButton type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "Signing in..." : "Sign In"}
-                    </GhibliButton>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="password" className="ghibli-label">
+                        Password
+                      </label>
+                      <Link href="/forgot-password" className="text-sm text-[var(--primary)] hover:underline">
+                        Forgot password?
+                      </Link>
+                    </div>
+                    <input
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      className="ghibli-input"
+                    />
                   </div>
-                </form>
-              </TabsContent>
-              <TabsContent value="register">
-                <form onSubmit={handleRegister}>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input id="username" name="username" placeholder="ghibli_fan" required className="input-ghibli" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-email">Email</Label>
-                      <Input
-                        id="reg-email"
-                        name="email"
-                        type="email"
-                        placeholder="your.email@example.com"
-                        required
-                        className="input-ghibli"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-password">Password</Label>
-                      <Input
-                        id="reg-password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••••"
-                        required
-                        className="input-ghibli"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="walletAddress">Wallet Address (Optional)</Label>
-                      <Input
-                        id="walletAddress"
-                        name="walletAddress"
-                        placeholder="Your Solana wallet address"
-                        className="input-ghibli"
-                      />
-                    </div>
-                    {error && <div className="text-sm text-destructive">{error}</div>}
-                    {success && <div className="text-sm text-green-600">{success}</div>}
+                  {error && <div className="text-sm text-[var(--destructive)]">{error}</div>}
+                </div>
+                <div className="mt-6">
+                  <button type="submit" className="ghibli-button w-full" disabled={isLoading}>
+                    {isLoading ? "Signing in..." : "Sign In"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleRegister}>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label htmlFor="username" className="ghibli-label">
+                      Username
+                    </label>
+                    <input id="username" name="username" placeholder="ghibli_fan" required className="ghibli-input" />
                   </div>
-                  <div className="mt-6">
-                    <GhibliButton type="submit" className="w-full" disabled={isLoading}>
-                      {isLoading ? "Creating account..." : "Create Account"}
-                    </GhibliButton>
+                  <div className="space-y-2">
+                    <label htmlFor="reg-email" className="ghibli-label">
+                      Email
+                    </label>
+                    <input
+                      id="reg-email"
+                      name="email"
+                      type="email"
+                      placeholder="your.email@example.com"
+                      required
+                      className="ghibli-input"
+                    />
                   </div>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </GhibliCard>
+                  <div className="space-y-2">
+                    <label htmlFor="reg-password" className="ghibli-label">
+                      Password
+                    </label>
+                    <input
+                      id="reg-password"
+                      name="password"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      className="ghibli-input"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="walletAddress" className="ghibli-label">
+                      Wallet Address (Optional)
+                    </label>
+                    <input
+                      id="walletAddress"
+                      name="walletAddress"
+                      placeholder="Your Solana wallet address"
+                      className="ghibli-input"
+                    />
+                  </div>
+                  {error && <div className="text-sm text-[var(--destructive)]">{error}</div>}
+                  {success && <div className="text-sm text-green-600">{success}</div>}
+                </div>
+                <div className="mt-6">
+                  <button type="submit" className="ghibli-button w-full" disabled={isLoading}>
+                    {isLoading ? "Creating account..." : "Create Account"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
         </motion.div>
       </div>
     </>
