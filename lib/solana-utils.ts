@@ -4,8 +4,8 @@
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js"
 
 // In a real app, you would use environment variables for these values
-const SOLANA_RPC_URL = "https://api.mainnet-beta.solana.com"
-const NFT_PROGRAM_ID = new PublicKey("YOUR_PROGRAM_ID_HERE")
+const SOLANA_RPC_URL = "https://api.devnet-beta.solana.com"
+const NFT_PROGRAM_ID = new PublicKey(process.env.PROGRAM_ID || "YOUR_PROGRAM_ID_HERE")
 
 // Initialize connection to Solana
 export const getConnection = () => {
