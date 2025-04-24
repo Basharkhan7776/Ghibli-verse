@@ -127,8 +127,8 @@ export default function ExplorePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {nfts.map((nft) => (
-              <NFTCard key={nft.id} nft={nft} />
+            {nfts.map((nft, index) => (
+              <NFTCard key={nft.id} nft={nft} index={index} />
             ))}
           </div>
 
